@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Light theme tokens */
+  --background: #eef1f6; /* soft, slightly blue-tinted for neo */
+  --foreground: #0f172a; /* slate-900 */
+  --neo-shadow-dark: rgba(163, 177, 198, 0.7); /* darker shadow */
+  --neo-shadow-light: rgba(255, 255, 255, 0.9); /* highlight */
 }
 
 @theme inline {
@@ -14,13 +17,136 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b0f14; /* deep slate for neo */
+    --foreground: #e5e7eb; /* gray-200 */
+    --neo-shadow-dark: rgba(0, 0, 0, 0.6);
+    --neo-shadow-light: rgba(60, 60, 60, 0.6);
   }
+  :root.dark {
+    --background: 15 23 42; /* slate-900 */
+    --foreground: 226 232 240; /* slate-200 */
+    /* Custom neutral-900 in dark mode */
+    --tw-text-opacity: 1;
+    --tw-text-neutral-900: lab(56 -45.31 16.82 / var(--tw-text-opacity));
+  }
+}
+
+/* Explicit overrides when .dark class is present (takes precedence) */
+.dark {
+  --background: #0b0f14;
+  --foreground: #e5e7eb;
+  --neo-shadow-dark: rgba(0, 0, 0, 0.6);
+  --neo-shadow-light: rgba(60, 60, 60, 0.6);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  /* Site-wide dynamic gradient background + subtle grain */
+  background-image:
+    radial-gradient(ellipse at top, rgba(16, 185, 129, 0.06), transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(66, 131, 235, 0.05), transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0.03 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: 120% 60%, 120% 60%, 120px 120px;
+  background-position: 50% 0%, 50% 100%, 0 0;
+  background-attachment: fixed, fixed, fixed;
+}
+
+/* Dark mode: stronger gradients for contrast */
+.dark body {
+  background-image:
+    radial-gradient(ellipse at top, rgba(16, 185, 129, 0.10), transparent 60%),
+    radial-gradient(ellipse at bottom, rgba(59, 130, 246, 0.08), transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncA type='table' tableValues='0 0 0.05 0'/></feComponentTransfer></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* Neumorphism helpers */
+.neo-surface {
+  background: var(--background);
+  border-radius: 1rem;
+  transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.neo {
+  /* twin soft shadows for raised effect */
+  box-shadow:
+    10px 10px 24px var(--neo-shadow-dark),
+    -10px -10px 24px var(--neo-shadow-light);
+}
+
+/* Neumorphic hover (gentle lift) */
+.neo:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    12px 12px 28px var(--neo-shadow-dark),
+    -12px -12px 28px var(--neo-shadow-light);
+}
+
+.neo-inset {
+  border-radius: 0.5rem;
+  box-shadow:
+    inset 6px 6px 14px var(--neo-shadow-dark),
+    inset -6px -6px 14px var(--neo-shadow-light);
+}
+
+.neo-inset:hover {
+  box-shadow:
+    inset 7px 7px 16px var(--neo-shadow-dark),
+    inset -7px -7px 16px var(--neo-shadow-light);
+}
+
+.neo-btn {
+  border-radius: 0.625rem;
+  transition: transform 0.08s ease, box-shadow 0.12s ease, background 0.2s ease;
+  box-shadow:
+    8px 8px 18px var(--neo-shadow-dark),
+    -8px -8px 18px var(--neo-shadow-light);
+}
+.neo-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    10px 10px 22px var(--neo-shadow-dark),
+    -10px -10px 22px var(--neo-shadow-light);
+}
+.neo-btn:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 6px 6px 12px var(--neo-shadow-dark),
+    inset -6px -6px 12px var(--neo-shadow-light);
+}
+
+/* Monotone icon utility */
+.mono-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: currentColor; /* inherits from parent text color */
+  flex-shrink: 0;
+}
+
+/* Apply custom neutral-900 in dark mode */
+.dark .text-neutral-900 {
+  color: var(--tw-text-neutral-900);
+}
+
+/* Logo carousel animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-250px * 5)); /* Width of 5 logos */
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+  display: flex;
+  width: calc(250px * 10); /* Double the width for smooth loop */
+}
+
+/* Pause animation on hover */
+.group:hover .animate-scroll {
+  animation-play-state: paused;
 }

@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: secure-messenger
+    env: node
+    region: oregon
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CORS_ORIGIN
+        value: https://chat.codexone.online
+      - key: NEXT_PUBLIC_SOCKET_URL
+        value: https://chat.codexone.online
+      - key: NEXT_PUBLIC_SOCKET_PATH
+        value: /ws
+      - key: REDIS_URL
+        value: ""

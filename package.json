@@ -3,25 +3,53 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "concurrently -k -n next,server -c blue,green \"next dev -p 3001 --turbopack\" \"npm:server\"",
+    "server": "nodemon --watch server --ext mjs,json --exec \"node server/index.mjs\"",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build:prod": "node build-production.js",
+    "build:server": "tsc --project tsconfig.server.json",
+    "start": "next start -p ${PORT:-3000}",
+    "start:prod": "NODE_ENV=production node production-server.js",
+    "serve": "NODE_ENV=production node .next/standalone/server.js",
+    "deploy": "npm run build:prod && npm run serve",
+    "lint": "next lint",
+    "postinstall": "echo Skipping postinstall"
   },
   "dependencies": {
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dompurify": "^3.2.6",
+    "dotenv": "^17.2.1",
+    "emoji-mart": "^5.6.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "framer-motion": "^12.23.12",
+    "helmet": "^8.1.0",
+    "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.4.6"
+    "react-qr-code": "^2.0.18",
+    "redis": "^5.8.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "uuid": "^11.1.0",
+    "zod": "^4.0.17",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/node": "^20.19.11",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.2.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.6",
-    "@eslint/eslintrc": "^3"
+    "netlify-cli": "^23.5.0",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
